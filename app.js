@@ -466,7 +466,11 @@ class OrnamentsApp {
         // XML의 imagePath가 절대 경로이므로 상대 경로로 변환
         if (ornament.imagePath) {
             // 절대 경로에서 상대 경로로 변환
-            const relativePath = ornament.imagePath.replace(/^.*\/Resources\//, 'Resources/');
+            let relativePath = ornament.imagePath.replace(/^.*\/Resources\//, 'Resources/');
+            
+            // GitHub Pages 호환성을 위해 추가 처리
+            relativePath = this.normalizePathForEnvironment(relativePath);
+            
             console.log('XML 경로 변환:', ornament.imagePath, '->', relativePath);
             return relativePath;
         }
@@ -474,11 +478,40 @@ class OrnamentsApp {
         // 기본 이미지 경로 생성
         const basePath = 'Resources/Ornaments';
         const instrumentPath = this.getInstrumentPath(ornament.instrumentName);
-        const categoryPath = this.getCategoryPath(ornament.categoryName);
-        const fullPath = `${basePath}/${instrumentPath}/${categoryPath}/${ornament.filename}`;
+        const categoryPath = this.getCategoryPath(ornament.categoryName, ornament.instrumentName);
+        let fullPath = `${basePath}/${instrumentPath}/${categoryPath}/${ornament.filename}`;
+        
+        // 환경에 맞는 경로 정규화
+        fullPath = this.normalizePathForEnvironment(fullPath);
         
         console.log('생성된 경로:', fullPath);
         return fullPath;
+    }
+
+    /**
+     * 환경에 맞는 경로 정규화
+     */
+    normalizePathForEnvironment(path) {
+        const currentPath = window.location.pathname;
+        const hostname = window.location.hostname;
+        
+        // GitHub Pages 환경 감지
+        const isGitHubPages = hostname.includes('github.io') || 
+                             currentPath.includes('/ornaments-filter-web/') || 
+                             currentPath.includes('/ornaments-filter-web');
+        
+        if (isGitHubPages) {
+            // GitHub Pages에서는 repository name을 base path로 사용
+            const basePath = '/ornaments-filter-web/';
+            
+            // 이미 base path가 포함되어 있지 않은 경우에만 추가
+            if (!path.startsWith(basePath) && !path.startsWith('/ornaments-filter-web')) {
+                return basePath + path;
+            }
+        }
+        
+        // 로컬 개발 환경에서는 상대 경로 그대로 사용
+        return path;
     }
 
     /**
@@ -503,22 +536,49 @@ class OrnamentsApp {
     /**
      * 카테고리 경로 생성
      */
-    getCategoryPath(categoryName) {
-        const categoryMap = {
-            '주법_악상기호': '1_주법_악상기호',
-            '빠르기(한배)_악상기호': '2_빠르기(한배)_악상기호',
-            '장식음(꾸밈음)_악상기호': '2_장식음(꾸밈음)_악상기호',
-            '부호_악상기호': '1_부호_악상기호',
-            '빠르기(한배)_악상기호': '3_빠르기(한배)_악상기호',
-            '주법_악상기호': '4_주법_악상기호',
-            '음정(가락)_악상기호': '4_음정(가락)_악상기호',
-            '장식(꾸밈음)_악상기호': '3_장식(꾸밈음)_악상기호',
-            '당피리:세피리_악상기호': '5_당피리:세피리_악상기호'
+    getCategoryPath(categoryName, instrumentName) {
+        // XML 카테고리명에서 접미사 제거
+        const cleaned = (categoryName || '')
+            .replace(/_악상기호/g, '')
+            .trim();
+
+        // 악기별 실제 폴더 매핑
+        const perInstrumentCategoryMap = {
+            '장구': {
+                '구음': '1_구음',
+                '악상기호': '1_구음'
+            },
+            '가야금': {
+                '주법': '1_주법',
+                '빠르기(한배)': '2_빠르기(한배)'
+            },
+            '대금': {
+                '부호': '1_부호',
+                '장식음(꾸밈음)': '2_장식음(꾸밈음)',
+                '빠르기(한배)': '3_빠르기(한배)',
+                '주법': '4_주법'
+            },
+            '아쟁': {
+                '주법': '1_주법',
+                '빠르기(한배)': '2_빠르기(한배)'
+            },
+            '피리': {
+                '주법': '1_주법',
+                '빠르기(한배)': '2_빠르기(한배)',
+                '장식(꾸밈음)': '3_장식(꾸밈음)',
+                '음정(가락)': '4_음정(가락)',
+                '당피리:세피리': '5_당피리:세피리'
+            },
+            '해금': {
+                '주법': '1_주법',
+                '빠르기(한배)': '2_빠르기(한배)'
+            }
         };
-        
-        const path = categoryMap[categoryName] || categoryName;
-        console.log('카테고리 경로 매핑:', categoryName, '->', path);
-        return path;
+
+        const mapForInstrument = perInstrumentCategoryMap[instrumentName] || {};
+        const resolved = mapForInstrument[cleaned] || cleaned;
+        console.log('카테고리 경로 매핑:', instrumentName, categoryName, '->', resolved);
+        return resolved;
     }
 
     /**
