@@ -1,0 +1,455 @@
+/* 기본 스타일 리셋 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    min-height: 100vh;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 탭 네비게이션 */
+.tab-navigation {
+    display: flex;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    color: #333;
+    background-color: #f8f8f8;
+}
+
+.tab-button.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+}
+
+/* 검색 섹션 */
+.search-section {
+    margin-bottom: 30px;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: border-color 0.3s ease;
+}
+
+.search-container:focus-within {
+    border-color: #007bff;
+}
+
+.search-icon {
+    font-size: 18px;
+    margin-right: 12px;
+    color: #666;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: none;
+    font-size: 16px;
+    outline: none;
+    color: #333;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+/* Name 섹션 */
+.name-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.name-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.name-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.name-icon {
+    font-size: 48px;
+    color: #666;
+}
+
+.name-description {
+    font-size: 16px;
+    color: #555;
+    flex: 1;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    margin-bottom: 25px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-header:hover {
+    background-color: #e9ecef;
+}
+
+.filter-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.toggle-icon {
+    font-size: 14px;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+.filter-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.filter-content {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    background-color: white;
+}
+
+.filter-content.collapsed {
+    display: none;
+}
+
+/* 필터 버튼 */
+.filter-button {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filter-button:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.filter-button.active {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+/* 결과 섹션 */
+.results-section {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.results-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.results-content {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: white;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.result-item {
+    background-color: rgba(248, 249, 250, 0.8);
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.result-item:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.result-item.selected {
+    background-color: rgba(0, 123, 255, 0.9);
+    border-color: #007bff;
+    color: white;
+}
+
+.result-item img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 4px;
+    background-color: transparent;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+.fallback-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.result-item .name {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* 로딩 오버레이 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-overlay p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* 스크롤바 스타일링 */
+.results-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.results-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.results-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.results-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 15px;
+    }
+
+    .filter-content {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 8px;
+    }
+
+    .results-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 8px;
+    }
+
+    .filter-button {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .result-item {
+        padding: 10px;
+    }
+
+    .result-item img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .result-item .name {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-container {
+        padding: 10px;
+    }
+
+    .filter-content {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 6px;
+    }
+
+    .results-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 6px;
+    }
+
+    .filter-button {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+
+    .result-item {
+        padding: 8px;
+    }
+
+    .result-item img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .result-item .name {
+        font-size: 10px;
+    }
+}
+
+/* 접근성 개선 */
+.filter-button:focus,
+.result-item:focus,
+.tab-button:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* 애니메이션 */
+.filter-content,
+.results-content {
+    transition: all 0.3s ease;
+}
+
+.result-item {
+    transition: all 0.2s ease;
+}
+
+/* 선택된 항목 강조 */
+.filter-button.active,
+.result-item.selected {
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* 빈 결과 상태 */
+.empty-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 16px;
+}
+
+.empty-results .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한국 전통 음악 악상기호 필터</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 탭 네비게이션 -->
+        <div class="tab-navigation">
+            <button class="tab-button" data-tab="setting">Setting</button>
+            <button class="tab-button active" data-tab="articulation">Articulation</button>
+            <button class="tab-button" data-tab="global">Global</button>
+        </div>
+
+        <!-- 검색 바 -->
+        <div class="search-section">
+            <div class="search-container">
+                <div class="search-icon">🔍</div>
+                <input type="text" id="searchInput" placeholder="Place Holder" class="search-input">
+            </div>
+        </div>
+
+        <!-- Name 섹션 -->
+        <div class="name-section">
+            <h3>Name</h3>
+            <div class="name-content">
+                <div class="name-icon">🚫</div>
+                <p class="name-description">북편과 채편을 동시 연주한다.</p>
+            </div>
+        </div>
+
+        <!-- Categories 필터 -->
+        <div class="filter-section">
+            <div class="filter-header" data-section="categories">
+                <h3>Categories</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="filter-content" id="categoriesFilter">
+                <button class="filter-button" data-filter="categories" data-value="주법">주법</button>
+                <button class="filter-button" data-filter="categories" data-value="빠르기(한배)">빠르기(한배)</button>
+                <button class="filter-button" data-filter="categories" data-value="꾸밈음">꾸밈음</button>
+                <button class="filter-button" data-filter="categories" data-value="음높이">음높이</button>
+                <button class="filter-button" data-filter="categories" data-value="음세기">음세기</button>
+                <button class="filter-button" data-filter="categories" data-value="음표현">음표현</button>
+                <button class="filter-button" data-filter="categories" data-value="표기">표기</button>
+            </div>
+        </div>
+
+        <!-- Instruments 필터 -->
+        <div class="filter-section">
+            <div class="filter-header" data-section="instruments">
+                <h3>Instruments</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="filter-content" id="instrumentsFilter">
+                <button class="filter-button" data-filter="instruments" data-value="장구">장구</button>
+                <button class="filter-button" data-filter="instruments" data-value="대금">대금</button>
+                <button class="filter-button" data-filter="instruments" data-value="아쟁">아쟁</button>
+                <button class="filter-button" data-filter="instruments" data-value="피리">피리</button>
+                <button class="filter-button" data-filter="instruments" data-value="해금">해금</button>
+                <button class="filter-button" data-filter="instruments" data-value="가야금">가야금</button>
+                <button class="filter-button" data-filter="instruments" data-value="거문고">거문고</button>
+                <button class="filter-button" data-filter="instruments" data-value="당피리,세피리">당피리, 세피리</button>
+                <button class="filter-button" data-filter="instruments" data-value="기타">기타</button>
+            </div>
+        </div>
+
+        <!-- Type 필터 -->
+        <div class="filter-section">
+            <div class="filter-header" data-section="type">
+                <h3>Type</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="filter-content" id="typeFilter">
+                <button class="filter-button" data-filter="type" data-value="앞꾸밈음">앞꾸밈음</button>
+                <button class="filter-button" data-filter="type" data-value="뒷꾸밈음">뒷꾸밈음</button>
+            </div>
+        </div>
+
+        <!-- 결과 섹션 -->
+        <div class="results-section">
+            <div class="results-header">
+                <h3>Result (<span id="resultCount">0</span>)</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="results-content" id="resultsContainer">
+                <!-- 결과가 여기에 동적으로 로드됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>데이터를 로딩 중입니다...</p>
+    </div>
+
+    <script src="data-parser.js"></script>
+    <script src="search-engine.js"></script>
+    <script src="vst-bridge.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
