@@ -4,6 +4,7 @@
 class OrnamentsApp {
     constructor() {
         this.currentResults = [];
+        this.selectedOrnament = null;
         this.isInitialized = false;
         this.debounceTimer = null;
         
@@ -34,6 +35,12 @@ class OrnamentsApp {
             
             // 초기 데이터 표시
             this.displayResults(window.dataParser.getAllOrnaments());
+            
+            // 초기 UI 섹션 설정 (검색어가 없는 상태)
+            this.toggleUISections('');
+            
+            // 초기 Name 섹션 설정 (선택된 항목이 없는 상태)
+            this.updateNameSection();
             
             // 로딩 오버레이 숨김
             this.hideLoading();
@@ -290,6 +297,9 @@ class OrnamentsApp {
             window.searchEngine.addToSearchHistory(query);
         }
         
+        // UI 섹션 가시성 제어
+        this.toggleUISections(query);
+        
         // 현재 필터 상태 가져오기
         const filters = this.getCurrentFilters();
         
@@ -303,6 +313,85 @@ class OrnamentsApp {
         if (window.vstBridge.isVSTEnvironment) {
             window.vstBridge.syncSearchFromVST(query);
         }
+    }
+
+    /**
+     * Name 섹션 업데이트
+     */
+    updateNameSection() {
+        const nameIcon = document.getElementById('nameIcon');
+        const nameIconFallback = document.getElementById('nameIconFallback');
+        const nameDescription = document.querySelector('.name-description');
+        
+        if (!nameIcon || !nameIconFallback || !nameDescription) return;
+        
+        if (this.selectedOrnament) {
+            // 선택된 항목이 있을 때 - 이미지 표시
+            const imagePath = this.getImagePath(this.selectedOrnament);
+            
+            // 이미지 로딩 시도
+            nameIcon.src = imagePath;
+            nameIcon.alt = this.selectedOrnament.name;
+            
+            // 이미지 로딩 성공 시
+            nameIcon.onload = () => {
+                nameIcon.style.display = 'block';
+                nameIconFallback.style.display = 'none';
+            };
+            
+            // 이미지 로딩 실패 시
+            nameIcon.onerror = () => {
+                nameIcon.style.display = 'none';
+                nameIconFallback.style.display = 'flex';
+                nameIconFallback.textContent = '🎵';
+            };
+            
+            nameDescription.textContent = this.selectedOrnament.name;
+        } else {
+            // 선택된 항목이 없을 때 - 아이콘 숨김
+            nameIcon.style.display = 'none';
+            nameIconFallback.style.display = 'none';
+            nameDescription.textContent = '선택된 악상기호가 없습니다.';
+        }
+    }
+
+    /**
+     * UI 섹션 가시성 제어
+     */
+    toggleUISections(query) {
+        const hasSearchQuery = query && query.trim() !== '';
+        
+        // Name 섹션 - 항상 표시
+        const nameSection = document.querySelector('.name-section');
+        if (nameSection) {
+            nameSection.style.display = 'block';
+        }
+        
+        // Results 섹션 - 항상 표시
+        const resultsSection = document.querySelector('.results-section');
+        if (resultsSection) {
+            resultsSection.style.display = 'block';
+        }
+        
+        // Categories 필터 - 검색어가 없을 때만 표시
+        const categoriesSection = document.querySelector('[data-section="categories"]').closest('.filter-section');
+        if (categoriesSection) {
+            categoriesSection.style.display = hasSearchQuery ? 'none' : 'block';
+        }
+        
+        // Instruments 필터 - 검색어가 없을 때만 표시
+        const instrumentsSection = document.querySelector('[data-section="instruments"]').closest('.filter-section');
+        if (instrumentsSection) {
+            instrumentsSection.style.display = hasSearchQuery ? 'none' : 'block';
+        }
+        
+        // Type 필터 - 검색어가 없을 때만 표시
+        const typeSection = document.querySelector('[data-section="type"]').closest('.filter-section');
+        if (typeSection) {
+            typeSection.style.display = hasSearchQuery ? 'none' : 'block';
+        }
+        
+        console.log('UI 섹션 가시성 제어:', hasSearchQuery ? '검색 모드' : '필터 모드');
     }
 
     /**
@@ -386,6 +475,9 @@ class OrnamentsApp {
                     <p>검색 결과가 없습니다.</p>
                 </div>
             `;
+            // 결과가 없으면 선택된 항목도 없음
+            this.selectedOrnament = null;
+            this.updateNameSection();
             return;
         }
         
@@ -401,6 +493,9 @@ class OrnamentsApp {
         // 기존 결과 제거 후 새 결과 추가
         resultsContainer.innerHTML = '';
         resultsContainer.appendChild(resultsGrid);
+        
+        // Name 섹션 업데이트
+        this.updateNameSection();
     }
 
     /**
@@ -587,11 +682,17 @@ class OrnamentsApp {
     selectOrnament(ornament) {
         console.log('악상기호 선택:', ornament);
         
+        // 선택된 항목 저장
+        this.selectedOrnament = ornament;
+        
         // VST 브리지를 통해 선택
         window.vstBridge.selectOrnament(ornament);
         
         // 선택된 항목 강조
         this.highlightSelectedItem(ornament.id);
+        
+        // Name 섹션 업데이트
+        this.updateNameSection();
     }
 
     /**
