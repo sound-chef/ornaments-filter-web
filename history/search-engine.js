@@ -1,5 +1,6 @@
 /**
  * 검색 엔진 및 퍼지 검색 구현
+ * 한국어에 특화되진 않았음
  */
 class SearchEngine {
     constructor() {
