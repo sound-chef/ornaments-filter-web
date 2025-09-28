@@ -71,9 +71,10 @@ body {
 }
 
 .search-icon {
-    font-size: 18px;
+    width: 18px;
+    height: 18px;
     margin-right: 12px;
-    color: #666;
+    opacity: 0.6;
 }
 
 .search-input {
