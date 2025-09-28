@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개선된 검색 및 필터 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-button:hover {
+            background: #e9e9e9;
+        }
+
+        .filter-button.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border: 1px solid #eee;
+            margin: 5px 0;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .result-item h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .result-item p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>개선된 검색 및 필터 테스트</h1>
+
+    <div class="test-section">
+        <h2>데이터 로드 상태</h2>
+        <div id="loadStatus"></div>
+        <button onclick="checkDataStatus()">데이터 상태 확인</button>
+    </div>
+
+    <div class="test-section">
+        <h2>검색 테스트</h2>
+        <input type="text" id="searchInput" class="search-box" placeholder="검색어를 입력하세요 (예: 덧길이, 조금느리게, 가야금)">
+        <button onclick="performSearch()">검색</button>
+        <button onclick="clearSearch()">검색 초기화</button>
+        <div id="searchResults" class="results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>악기 필터</h2>
+        <div id="instrumentsFilter" class="filter-buttons"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>카테고리 필터</h2>
+        <div id="categoriesFilter" class="filter-buttons"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>필터링된 결과</h2>
+        <div id="filteredResults" class="results"></div>
+    </div>
+
+    <script src="data-parser.js"></script>
+    <script src="search-engine.js"></script>
+    <script>
+        let dataParser;
+        let searchEngine;
+        let currentFilters = {
+            instruments: [],
+            categories: []
+        };
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('DOMContentLoaded', async () => {
+            dataParser = new DataParser();
+            searchEngine = new SearchEngine();
+
+            const loaded = await dataParser.loadData();
+            if (loaded) {
+                updateLoadStatus(true);
+                generateFilters();
+                displayAllResults();
+            } else {
+                updateLoadStatus(false);
+            }
+        });
+
+        function updateLoadStatus(success) {
+            const statusDiv = document.getElementById('loadStatus');
+            if (success) {
+                const count = dataParser.getAllOrnaments().length;
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ 데이터 로드 성공! 총 ${count}개의 악상기호가 로드되었습니다.
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ 데이터 로드 실패
+                    </div>
+                `;
+            }
+        }
+
+        function generateFilters() {
+            generateInstrumentFilters();
+            generateCategoryFilters();
+        }
+
+        function generateInstrumentFilters() {
+            const container = document.getElementById('instrumentsFilter');
+            container.innerHTML = '';
+
+            const instruments = dataParser.getInstruments();
+            instruments.forEach(instrument => {
+                const button = document.createElement('button');
+                button.className = 'filter-button';
+                button.textContent = instrument.korean;
+                button.onclick = () => toggleFilter('instruments', instrument.korean);
+                container.appendChild(button);
+            });
+        }
+
+        function generateCategoryFilters() {
+            const container = document.getElementById('categoriesFilter');
+            container.innerHTML = '';
+
+            const categories = dataParser.getCategories();
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'filter-button';
+                button.textContent = dataParser.cleanFilterName(category);
+                button.onclick = () => toggleFilter('categories', category);
+                container.appendChild(button);
+            });
+        }
+
+        function toggleFilter(type, value) {
+            const button = event.target;
+            const isActive = button.classList.contains('active');
+
+            if (isActive) {
+                button.classList.remove('active');
+                currentFilters[type] = currentFilters[type].filter(v => v !== value);
+            } else {
+                button.classList.add('active');
+                currentFilters[type].push(value);
+            }
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const filtered = dataParser.filterOrnaments(currentFilters);
+            displayFilteredResults(filtered);
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (!query.trim()) {
+                displayAllResults();
+                return;
+            }
+
+            const results = dataParser.searchOrnaments(query);
+            displaySearchResults(results, query);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            displayAllResults();
+        }
+
+        function displayAllResults() {
+            const allOrnaments = dataParser.getAllOrnaments();
+            displayFilteredResults(allOrnaments);
+        }
+
+        function displaySearchResults(results, query) {
+            const container = document.getElementById('searchResults');
+            container.innerHTML = `
+                <h3>검색 결과: "${query}" (${results.length}개)</h3>
+                ${results.slice(0, 10).map(orn => `
+                    <div class="result-item">
+                        <h4>${orn.name}</h4>
+                        <p><strong>악기:</strong> ${orn.instrumentName}</p>
+                        <p><strong>카테고리:</strong> ${dataParser.cleanFilterName(orn.categoryName)}</p>
+                        <p><strong>설명:</strong> ${orn.description}</p>
+                    </div>
+                `).join('')}
+                ${results.length > 10 ? `<p>... 및 ${results.length - 10}개 더</p>` : ''}
+            `;
+        }
+
+        function displayFilteredResults(results) {
+            const container = document.getElementById('filteredResults');
+            container.innerHTML = `
+                <h3>필터링된 결과 (${results.length}개)</h3>
+                ${results.slice(0, 20).map(orn => `
+                    <div class="result-item">
+                        <h4>${orn.name}</h4>
+                        <p><strong>악기:</strong> ${orn.instrumentName}</p>
+                        <p><strong>카테고리:</strong> ${dataParser.cleanFilterName(orn.categoryName)}</p>
+                        <p><strong>설명:</strong> ${orn.description}</p>
+                    </div>
+                `).join('')}
+                ${results.length > 20 ? `<p>... 및 ${results.length - 20}개 더</p>` : ''}
+            `;
+        }
+
+        function checkDataStatus() {
+            if (dataParser && dataParser.isDataLoaded()) {
+                const ornaments = dataParser.getAllOrnaments();
+                const instruments = dataParser.getInstruments();
+                const categories = dataParser.getCategories();
+
+                console.log('데이터 상태:');
+                console.log('- 악상기호:', ornaments.length);
+                console.log('- 악기:', instruments.length);
+                console.log('- 카테고리:', categories.length);
+                console.log('- 첫 번째 악상기호:', ornaments[0]);
+                console.log('- 악기 목록:', instruments.map(i => i.korean));
+                console.log('- 카테고리 목록:', categories.map(c => dataParser.cleanFilterName(c)));
+            } else {
+                console.log('데이터가 로드되지 않았습니다.');
+            }
+        }
+    </script>
+</body>
+
+</html>
