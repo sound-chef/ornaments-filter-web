@@ -8,6 +8,18 @@ class OrnamentsApp {
         this.isInitialized = false;
         this.debounceTimer = null;
         
+        // 카테고리-악기 호환성 매핑
+        this.categoryInstrumentCompatibility = {
+            '빠르기(한배)': ['가야금', '대금', '아쟁', '피리', '해금'], // 장구 제외
+            '구음': ['장구'],
+            '주법': ['가야금', '대금', '아쟁', '피리', '해금'],
+            '부호': ['대금'],
+            '장식음(꾸밈음)': ['대금'],
+            '장식(꾸밈음)': ['피리'],
+            '음정(가락)': ['피리'],
+            '당피리:세피리': ['피리']
+        };
+        
         this.init();
     }
 
@@ -41,6 +53,9 @@ class OrnamentsApp {
             
             // 초기 Name 섹션 설정 (선택된 항목이 없는 상태)
             this.updateNameSection();
+            
+            // 초기 악기 버튼 상태 설정
+            this.updateInstrumentButtonStates();
             
             // 로딩 오버레이 숨김
             this.hideLoading();
@@ -121,6 +136,11 @@ class OrnamentsApp {
         // 필터 버튼 클릭 이벤트 (동적으로 생성된 버튼들)
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-button')) {
+                // 비활성화된 버튼은 클릭 무시
+                if (e.target.disabled || e.target.classList.contains('disabled')) {
+                    return;
+                }
+                
                 const filterType = e.target.getAttribute('data-filter');
                 const filterValue = e.target.getAttribute('data-value');
                 this.toggleFilter(filterType, filterValue);
@@ -428,6 +448,54 @@ class OrnamentsApp {
     }
 
     /**
+     * 악기 버튼 활성화/비활성화 제어
+     */
+    updateInstrumentButtonStates() {
+        const activeCategories = this.getActiveCategories();
+        const instrumentButtons = document.querySelectorAll('[data-filter="instruments"]');
+        
+        instrumentButtons.forEach(button => {
+            const instrumentName = button.getAttribute('data-value');
+            let shouldDisable = false;
+            
+            // 활성화된 카테고리가 있고, 해당 카테고리와 호환되지 않는 악기인 경우
+            if (activeCategories.length > 0) {
+                shouldDisable = !this.isInstrumentCompatibleWithCategories(instrumentName, activeCategories);
+            }
+            
+            if (shouldDisable) {
+                button.disabled = true;
+                button.classList.add('disabled');
+                button.style.opacity = '0.5';
+                button.style.cursor = 'not-allowed';
+            } else {
+                button.disabled = false;
+                button.classList.remove('disabled');
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+            }
+        });
+    }
+
+    /**
+     * 활성화된 카테고리 목록 가져오기
+     */
+    getActiveCategories() {
+        const activeCategoryButtons = document.querySelectorAll('[data-filter="categories"].active');
+        return Array.from(activeCategoryButtons).map(button => button.getAttribute('data-value'));
+    }
+
+    /**
+     * 악기가 선택된 카테고리들과 호환되는지 확인
+     */
+    isInstrumentCompatibleWithCategories(instrumentName, categories) {
+        return categories.some(category => {
+            const compatibleInstruments = this.categoryInstrumentCompatibility[category];
+            return compatibleInstruments && compatibleInstruments.includes(instrumentName);
+        });
+    }
+
+    /**
      * 필터 적용
      */
     applyFilters() {
@@ -436,6 +504,9 @@ class OrnamentsApp {
         
         console.log('필터 적용:', filters);
         console.log('검색어:', searchQuery);
+        
+        // 악기 버튼 상태 업데이트
+        this.updateInstrumentButtonStates();
         
         // 검색 수행
         const results = window.searchEngine.performSearch(searchQuery, filters);
