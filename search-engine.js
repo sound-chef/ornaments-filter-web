@@ -217,19 +217,27 @@ class SearchEngine {
      * 통합 검색 (검색어 + 필터)
      */
     performSearch(query, filters = null) {
+        console.log('SearchEngine.performSearch 호출:', { query, filters });
+        
         let results = window.dataParser.getAllOrnaments();
+        console.log('전체 데이터 개수:', results.length);
         
         // 필터 적용
         const activeFilters = filters || this.currentFilters;
         if (activeFilters) {
+            console.log('필터 적용 전:', results.length);
             results = window.dataParser.filterOrnaments(activeFilters);
+            console.log('필터 적용 후:', results.length);
         }
         
         // 검색어 적용
         if (query && query.trim() !== '') {
+            console.log('검색어 적용 전:', results.length);
             results = this.fuzzySearch(query, results);
+            console.log('검색어 적용 후:', results.length);
         }
         
+        console.log('최종 결과 개수:', results.length);
         return results;
     }
 

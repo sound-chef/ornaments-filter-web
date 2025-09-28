@@ -142,13 +142,23 @@ class OrnamentsApp {
      * 필터 토글
      */
     toggleFilter(filterType, filterValue) {
+        console.log('필터 토글:', filterType, filterValue);
+        
         const button = document.querySelector(`[data-filter="${filterType}"][data-value="${filterValue}"]`);
+        if (!button) {
+            console.error('필터 버튼을 찾을 수 없습니다:', filterType, filterValue);
+            return;
+        }
+        
         const isActive = button.classList.contains('active');
+        console.log('현재 상태:', isActive ? '활성' : '비활성');
         
         if (isActive) {
             button.classList.remove('active');
+            console.log('필터 비활성화');
         } else {
             button.classList.add('active');
+            console.log('필터 활성화');
         }
         
         // 필터 적용
@@ -249,9 +259,14 @@ class OrnamentsApp {
         };
         
         // 활성화된 필터 버튼들 찾기
-        document.querySelectorAll('.filter-button.active').forEach(button => {
+        const activeButtons = document.querySelectorAll('.filter-button.active');
+        console.log('활성화된 필터 버튼 개수:', activeButtons.length);
+        
+        activeButtons.forEach(button => {
             const filterType = button.getAttribute('data-filter');
             const filterValue = button.getAttribute('data-value');
+            
+            console.log('필터 버튼:', filterType, filterValue);
             
             if (filterType === 'instruments') {
                 filters.instruments.push(filterValue);
@@ -262,6 +277,7 @@ class OrnamentsApp {
             }
         });
         
+        console.log('현재 필터 상태:', filters);
         return filters;
     }
 
@@ -273,9 +289,12 @@ class OrnamentsApp {
         const searchQuery = document.getElementById('searchInput').value;
         
         console.log('필터 적용:', filters);
+        console.log('검색어:', searchQuery);
         
         // 검색 수행
         const results = window.searchEngine.performSearch(searchQuery, filters);
+        
+        console.log('필터링된 결과 개수:', results.length);
         
         // 결과 표시
         this.displayResults(results);

@@ -32,6 +32,11 @@ class DataParser {
                 ornaments: this.ornamentsData.length
             });
             
+            // 첫 번째 악상기호 샘플 출력
+            if (this.ornamentsData.length > 0) {
+                console.log('첫 번째 악상기호 샘플:', this.ornamentsData[0]);
+            }
+            
             return true;
         } catch (error) {
             console.error('데이터 로드 실패:', error);
@@ -91,6 +96,9 @@ class DataParser {
 
         // 카테고리 추출
         this.extractCategories();
+        
+        // 디버깅: 실제 카테고리명 출력
+        console.log('실제 카테고리명들:', this.categories);
     }
 
     /**
@@ -165,38 +173,103 @@ class DataParser {
     filterOrnaments(filters) {
         let filteredData = [...this.ornamentsData];
 
+        console.log('필터링 시작:', filters);
+        console.log('전체 데이터 개수:', this.ornamentsData.length);
+
         // 악기 필터
         if (filters.instruments && filters.instruments.length > 0) {
-            filteredData = filteredData.filter(ornament => 
-                filters.instruments.includes(ornament.instrumentName)
-            );
+            console.log('악기 필터 적용:', filters.instruments);
+            filteredData = filteredData.filter(ornament => {
+                const matches = filters.instruments.includes(ornament.instrumentName);
+                if (matches) {
+                    console.log('악기 매칭:', ornament.instrumentName, ornament.name);
+                }
+                return matches;
+            });
+            console.log('악기 필터 후 개수:', filteredData.length);
         }
 
         // 카테고리 필터
         if (filters.categories && filters.categories.length > 0) {
-            filteredData = filteredData.filter(ornament => 
-                filters.categories.includes(ornament.categoryName)
-            );
+            console.log('카테고리 필터 적용:', filters.categories);
+            filteredData = filteredData.filter(ornament => {
+                const matches = filters.categories.includes(ornament.categoryName);
+                if (matches) {
+                    console.log('카테고리 매칭:', ornament.categoryName, ornament.name);
+                }
+                return matches;
+            });
+            console.log('카테고리 필터 후 개수:', filteredData.length);
         }
 
         // 타입 필터 (앞꾸밈음/뒷꾸밈음)
         if (filters.types && filters.types.length > 0) {
+            console.log('타입 필터 적용:', filters.types);
             filteredData = filteredData.filter(ornament => {
-                // 타입 분류 로직 (실제 데이터에 따라 조정 필요)
-                const isFrontOrnament = ornament.name.includes('앞') || 
-                                       ornament.description.includes('앞꾸밈');
-                const isBackOrnament = ornament.name.includes('뒷') || 
-                                      ornament.description.includes('뒷꾸밈');
+                // 타입 분류 로직 개선
+                const isFrontOrnament = this.isFrontOrnament(ornament);
+                const isBackOrnament = this.isBackOrnament(ornament);
                 
-                return filters.types.some(type => {
+                const matches = filters.types.some(type => {
                     if (type === '앞꾸밈음') return isFrontOrnament;
                     if (type === '뒷꾸밈음') return isBackOrnament;
                     return true;
                 });
+                
+                if (matches) {
+                    console.log('타입 매칭:', ornament.name, '앞꾸밈음:', isFrontOrnament, '뒷꾸밈음:', isBackOrnament);
+                }
+                return matches;
             });
+            console.log('타입 필터 후 개수:', filteredData.length);
         }
 
+        console.log('최종 필터링 결과:', filteredData.length);
         return filteredData;
+    }
+
+    /**
+     * 앞꾸밈음 여부 판단
+     */
+    isFrontOrnament(ornament) {
+        const name = ornament.name?.toLowerCase() || '';
+        const description = ornament.description?.toLowerCase() || '';
+        const categoryName = ornament.categoryName?.toLowerCase() || '';
+        
+        // 앞꾸밈음 관련 키워드
+        const frontKeywords = [
+            '앞', '앞꾸밈', '앞장식', '앞음', '앞꾸밈음',
+            '니레', '니나', '니로', '노네', '너녜', '노니로', '노리노', '네로네', '느네느',
+            '나니로', '로니로', '느로니르', '느니-르', '니루-니', '나니르노니르'
+        ];
+        
+        // 카테고리 기반 판단
+        if (categoryName.includes('장식음') || categoryName.includes('장식')) {
+            return true;
+        }
+        
+        // 이름과 설명 기반 판단
+        return frontKeywords.some(keyword => 
+            name.includes(keyword) || description.includes(keyword)
+        );
+    }
+
+    /**
+     * 뒷꾸밈음 여부 판단
+     */
+    isBackOrnament(ornament) {
+        const name = ornament.name?.toLowerCase() || '';
+        const description = ornament.description?.toLowerCase() || '';
+        
+        // 뒷꾸밈음 관련 키워드
+        const backKeywords = [
+            '뒷', '뒷꾸밈', '뒷장식', '뒷음', '뒷꾸밈음',
+            '뒷꾸밈음', '뒷장식음'
+        ];
+        
+        return backKeywords.some(keyword => 
+            name.includes(keyword) || description.includes(keyword)
+        );
     }
 
     /**
