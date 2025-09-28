@@ -19,9 +19,19 @@ class DataParser {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            const xmlText = await response.text();
+            // 한글 인코딩을 위한 텍스트 디코딩
+            const arrayBuffer = await response.arrayBuffer();
+            const decoder = new TextDecoder('utf-8');
+            const xmlText = decoder.decode(arrayBuffer);
+            
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+            
+            // XML 파싱 오류 확인
+            const parseError = xmlDoc.querySelector('parsererror');
+            if (parseError) {
+                throw new Error('XML 파싱 오류: ' + parseError.textContent);
+            }
             
             this.parseXMLData(xmlDoc);
             this.isLoaded = true;
@@ -58,6 +68,8 @@ class DataParser {
                 korean: instrument.getAttribute('korean'),
                 categories: []
             };
+            
+            console.log('악기 데이터:', instrumentData);
 
             const categories = instrument.querySelectorAll('category');
             categories.forEach(category => {
@@ -67,25 +79,30 @@ class DataParser {
                     korean: category.getAttribute('korean'),
                     ornaments: []
                 };
+                
+                console.log('카테고리 데이터:', categoryData);
 
                 const ornaments = category.querySelectorAll('ornament');
                 ornaments.forEach(ornament => {
                     const ornamentData = {
-                        id: ornament.querySelector('id')?.textContent,
-                        name: ornament.querySelector('name')?.textContent,
-                        filename: ornament.querySelector('filename')?.textContent,
-                        description: ornament.querySelector('description')?.textContent,
+                        id: ornament.querySelector('id')?.textContent?.trim(),
+                        name: ornament.querySelector('name')?.textContent?.trim(),
+                        filename: ornament.querySelector('filename')?.textContent?.trim(),
+                        description: ornament.querySelector('description')?.textContent?.trim(),
                         autoalign: ornament.querySelector('autoalign')?.textContent === 'true',
                         rightColumnOnly: ornament.querySelector('rightColumnOnly')?.textContent === 'true',
-                        imagePath: ornament.querySelector('imagePath')?.textContent,
+                        imagePath: ornament.querySelector('imagePath')?.textContent?.trim(),
                         instrumentId: instrumentData.id,
                         instrumentName: instrumentData.korean,
                         categoryId: categoryData.id,
                         categoryName: categoryData.korean
                     };
 
-                    categoryData.ornaments.push(ornamentData);
-                    this.ornamentsData.push(ornamentData);
+                    // 데이터 유효성 검사
+                    if (ornamentData.id && ornamentData.name) {
+                        categoryData.ornaments.push(ornamentData);
+                        this.ornamentsData.push(ornamentData);
+                    }
                 });
 
                 instrumentData.categories.push(categoryData);
@@ -99,6 +116,7 @@ class DataParser {
         
         // 디버깅: 실제 카테고리명 출력
         console.log('실제 카테고리명들:', this.categories);
+        console.log('로드된 악상기호 개수:', this.ornamentsData.length);
     }
 
     /**
@@ -153,18 +171,55 @@ class DataParser {
         }
 
         const searchTerm = query.toLowerCase().trim();
+        console.log('검색어:', searchTerm);
+        console.log('전체 데이터 개수:', this.ornamentsData.length);
         
-        return this.ornamentsData.filter(ornament => {
+        if (this.ornamentsData.length === 0) {
+            console.log('데이터가 없습니다!');
+            return [];
+        }
+        
+        // 첫 번째 데이터 구조 확인
+        console.log('첫 번째 데이터:', this.ornamentsData[0]);
+        
+        const results = this.ornamentsData.filter(ornament => {
             const name = ornament.name?.toLowerCase() || '';
             const description = ornament.description?.toLowerCase() || '';
             const instrumentName = ornament.instrumentName?.toLowerCase() || '';
             const categoryName = ornament.categoryName?.toLowerCase() || '';
             
-            return name.includes(searchTerm) ||
-                   description.includes(searchTerm) ||
-                   instrumentName.includes(searchTerm) ||
-                   categoryName.includes(searchTerm);
+            console.log('검색 대상:', {
+                name: name,
+                description: description,
+                instrumentName: instrumentName,
+                categoryName: categoryName
+            });
+            
+            const match = name.includes(searchTerm) ||
+                         description.includes(searchTerm) ||
+                         instrumentName.includes(searchTerm) ||
+                         categoryName.includes(searchTerm);
+            
+            if (match) {
+                console.log('매칭된 항목:', ornament.name);
+            }
+            
+            return match;
         });
+        
+        console.log(`검색 결과: ${results.length}개`);
+        return results;
+    }
+
+    /**
+     * 한글 정규화 (초성, 중성, 종성 분리)
+     */
+    normalizeKorean(text) {
+        if (!text) return '';
+        
+        return text
+            .replace(/\s+/g, '') // 공백 제거
+            .toLowerCase();
     }
 
     /**

@@ -58,6 +58,9 @@ class OrnamentsApp {
         // 필터 섹션 설정
         this.setupFilterSections();
         
+        // 동적 필터 버튼 생성
+        this.generateFilterButtons();
+        
         // 검색 입력 설정
         this.setupSearchInput();
         
@@ -108,13 +111,66 @@ class OrnamentsApp {
             });
         });
         
-        // 필터 버튼 클릭 이벤트
-        document.querySelectorAll('.filter-button').forEach(button => {
-            button.addEventListener('click', (e) => {
+        // 필터 버튼 클릭 이벤트 (동적으로 생성된 버튼들)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-button')) {
                 const filterType = e.target.getAttribute('data-filter');
                 const filterValue = e.target.getAttribute('data-value');
                 this.toggleFilter(filterType, filterValue);
-            });
+            }
+        });
+    }
+
+    /**
+     * 동적 필터 버튼 생성
+     */
+    generateFilterButtons() {
+        // 악기 필터 버튼 생성
+        this.generateInstrumentFilters();
+        
+        // 카테고리 필터 버튼 생성
+        this.generateCategoryFilters();
+    }
+
+    /**
+     * 악기 필터 버튼 생성
+     */
+    generateInstrumentFilters() {
+        const instrumentsFilter = document.getElementById('instrumentsFilter');
+        if (!instrumentsFilter) return;
+
+        // 기존 버튼들 제거
+        instrumentsFilter.innerHTML = '';
+
+        const instruments = window.dataParser.getInstruments();
+        instruments.forEach(instrument => {
+            const button = document.createElement('button');
+            button.className = 'filter-button';
+            button.setAttribute('data-filter', 'instruments');
+            button.setAttribute('data-value', instrument.korean);
+            button.textContent = instrument.korean;
+            instrumentsFilter.appendChild(button);
+        });
+    }
+
+    /**
+     * 카테고리 필터 버튼 생성
+     */
+    generateCategoryFilters() {
+        const categoriesFilter = document.getElementById('categoriesFilter');
+        if (!categoriesFilter) return;
+
+        // 기존 버튼들 제거
+        categoriesFilter.innerHTML = '';
+
+        const categories = window.dataParser.getCategories();
+        categories.forEach(category => {
+            const button = document.createElement('button');
+            button.className = 'filter-button';
+            button.setAttribute('data-filter', 'categories');
+            button.setAttribute('data-value', category);
+            button.textContent = category;
+            categoriesFilter.appendChild(button);
         });
     }
 

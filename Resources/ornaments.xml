@@ -1520,12 +1520,12 @@
       </ornament>
       <ornament>
         <id>54</id>
-        <name>한음아래&한음위&본디음</name>
-        <filename>22_unnamed_한음아래&한음위&본디음.png</filename>
-        <description>한음아래&한음위&본디음 시김새</description>
+        <name>한음아래&amp;한음위&amp;본디음</name>
+        <filename>22_unnamed_한음아래&amp;한음위&amp;본디음.png</filename>
+        <description>한음아래&amp;한음위&amp;본디음 시김새</description>
         <autoalign>false</autoalign>
         <rightColumnOnly>false</rightColumnOnly>
-        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/22_unnamed_한음아래&한음위&본디음.png</imagePath>
+        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/22_unnamed_한음아래&amp;한음위&amp;본디음.png</imagePath>
       </ornament>
       <ornament>
         <id>55</id>
@@ -1592,12 +1592,12 @@
       </ornament>
       <ornament>
         <id>62</id>
-        <name>두음위음&한음위음&본디음</name>
-        <filename>14_unnamed_두음위음&한음위음&본디음.png</filename>
-        <description>두음위음&한음위음&본디음 시김새</description>
+        <name>두음위음&amp;한음위음&amp;본디음</name>
+        <filename>14_unnamed_두음위음&amp;한음위음&amp;본디음.png</filename>
+        <description>두음위음&amp;한음위음&amp;본디음 시김새</description>
         <autoalign>false</autoalign>
         <rightColumnOnly>false</rightColumnOnly>
-        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/14_unnamed_두음위음&한음위음&본디음.png</imagePath>
+        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/14_unnamed_두음위음&amp;한음위음&amp;본디음.png</imagePath>
       </ornament>
       <ornament>
         <id>63</id>
@@ -1691,21 +1691,21 @@
       </ornament>
       <ornament>
         <id>73</id>
-        <name>한음아래&본디음</name>
-        <filename>15_unnamed_한음아래&본디음.png</filename>
-        <description>한음아래&본디음 시김새</description>
+        <name>한음아래&amp;본디음</name>
+        <filename>15_unnamed_한음아래&amp;본디음.png</filename>
+        <description>한음아래&amp;본디음 시김새</description>
         <autoalign>false</autoalign>
         <rightColumnOnly>false</rightColumnOnly>
-        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/15_unnamed_한음아래&본디음.png</imagePath>
+        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/15_unnamed_한음아래&amp;본디음.png</imagePath>
       </ornament>
       <ornament>
         <id>74</id>
-        <name>한음아래&두음아래</name>
-        <filename>12_unnamed_한음아래&두음아래.png</filename>
-        <description>한음아래&두음아래 시김새</description>
+        <name>한음아래&amp;두음아래</name>
+        <filename>12_unnamed_한음아래&amp;두음아래.png</filename>
+        <description>한음아래&amp;두음아래 시김새</description>
         <autoalign>false</autoalign>
         <rightColumnOnly>false</rightColumnOnly>
-        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/12_unnamed_한음아래&두음아래.png</imagePath>
+        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/12_unnamed_한음아래&amp;두음아래.png</imagePath>
       </ornament>
       <ornament>
         <id>75</id>
@@ -1718,21 +1718,21 @@
       </ornament>
       <ornament>
         <id>76</id>
-        <name>한음위음&본디음</name>
-        <filename>11_unnamed_한음위음&본디음.png</filename>
-        <description>한음위음&본디음 시김새</description>
+        <name>한음위음&amp;본디음</name>
+        <filename>11_unnamed_한음위음&amp;본디음.png</filename>
+        <description>한음위음&amp;본디음 시김새</description>
         <autoalign>false</autoalign>
         <rightColumnOnly>false</rightColumnOnly>
-        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/11_unnamed_한음위음&본디음.png</imagePath>
+        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/11_unnamed_한음위음&amp;본디음.png</imagePath>
       </ornament>
       <ornament>
         <id>77</id>
-        <name>한음위음&두음위음</name>
-        <filename>13_unnamed_한음위음&두음위음.png</filename>
-        <description>한음위음&두음위음 시김새</description>
+        <name>한음위음&amp;두음위음</name>
+        <filename>13_unnamed_한음위음&amp;두음위음.png</filename>
+        <description>한음위음&amp;두음위음 시김새</description>
         <autoalign>false</autoalign>
         <rightColumnOnly>false</rightColumnOnly>
-        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/13_unnamed_한음위음&두음위음.png</imagePath>
+        <imagePath>/Users/yoroji/Documents/musicengineering/vst/ganbo/Resources/Ornaments/6_해금/1_주법_악상기호/13_unnamed_한음위음&amp;두음위음.png</imagePath>
       </ornament>
       <ornament>
         <id>78</id>
