@@ -33,18 +33,14 @@ class SearchEngine {
             let bestScore = 0;
             
             searchFields.forEach(field => {
-                // 한글 검색을 위한 정규화된 필드
-                const normalizedField = this.normalizeKorean(field);
-                const normalizedSearchTerm = this.normalizeKorean(searchTerm);
-                
-                // 원본 필드와 정규화된 필드 모두 검사
-                const originalScore = this.calculateSimilarity(searchTerm, field);
-                const normalizedScore = this.calculateSimilarity(normalizedSearchTerm, normalizedField);
-                
-                const score = Math.max(originalScore, normalizedScore);
-                if (score > bestScore) {
-                    bestScore = score;
+                // 정확한 매칭 우선
+                if (field.includes(searchTerm)) {
+                    bestScore = Math.max(bestScore, 1.0);
                 }
+                
+                // 부분 매칭 점수 계산
+                const partialScore = this.calculateSimilarity(searchTerm, field);
+                bestScore = Math.max(bestScore, partialScore);
             });
 
             if (bestScore >= threshold) {
@@ -116,7 +112,6 @@ class SearchEngine {
         }
 
         const searchTerm = query.toLowerCase().trim();
-        const normalizedSearchTerm = this.normalizeKorean(searchTerm);
         
         return data.filter(item => {
             const searchFields = [
@@ -127,8 +122,7 @@ class SearchEngine {
             ].filter(field => field).map(field => field.toLowerCase());
 
             return searchFields.some(field => {
-                const normalizedField = this.normalizeKorean(field);
-                return field.includes(searchTerm) || normalizedField.includes(normalizedSearchTerm);
+                return field.includes(searchTerm);
             });
         });
     }

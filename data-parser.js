@@ -171,43 +171,25 @@ class DataParser {
         }
 
         const searchTerm = query.toLowerCase().trim();
-        console.log('검색어:', searchTerm);
-        console.log('전체 데이터 개수:', this.ornamentsData.length);
         
         if (this.ornamentsData.length === 0) {
-            console.log('데이터가 없습니다!');
             return [];
         }
         
-        // 첫 번째 데이터 구조 확인
-        console.log('첫 번째 데이터:', this.ornamentsData[0]);
-        
         const results = this.ornamentsData.filter(ornament => {
+            // 각 필드에서 검색
             const name = ornament.name?.toLowerCase() || '';
             const description = ornament.description?.toLowerCase() || '';
             const instrumentName = ornament.instrumentName?.toLowerCase() || '';
             const categoryName = ornament.categoryName?.toLowerCase() || '';
             
-            console.log('검색 대상:', {
-                name: name,
-                description: description,
-                instrumentName: instrumentName,
-                categoryName: categoryName
-            });
-            
-            const match = name.includes(searchTerm) ||
-                         description.includes(searchTerm) ||
-                         instrumentName.includes(searchTerm) ||
-                         categoryName.includes(searchTerm);
-            
-            if (match) {
-                console.log('매칭된 항목:', ornament.name);
-            }
-            
-            return match;
+            // 정확한 매칭 또는 부분 매칭
+            return name.includes(searchTerm) ||
+                   description.includes(searchTerm) ||
+                   instrumentName.includes(searchTerm) ||
+                   categoryName.includes(searchTerm);
         });
         
-        console.log(`검색 결과: ${results.length}개`);
         return results;
     }
 
@@ -220,6 +202,18 @@ class DataParser {
         return text
             .replace(/\s+/g, '') // 공백 제거
             .toLowerCase();
+    }
+
+    /**
+     * 필터명 정리 (사용자 친화적으로 표시)
+     */
+    cleanFilterName(name) {
+        if (!name) return '';
+        
+        return name
+            .replace(/_악상기호/g, '') // "_악상기호" 제거
+            .replace(/_/g, ' ') // 언더스코어를 공백으로 변경
+            .trim();
     }
 
     /**

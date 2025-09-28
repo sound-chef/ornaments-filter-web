@@ -148,7 +148,7 @@ class OrnamentsApp {
             button.className = 'filter-button';
             button.setAttribute('data-filter', 'instruments');
             button.setAttribute('data-value', instrument.korean);
-            button.textContent = instrument.korean;
+            button.textContent = instrument.korean; // 악기명은 그대로 사용
             instrumentsFilter.appendChild(button);
         });
     }
@@ -169,7 +169,8 @@ class OrnamentsApp {
             button.className = 'filter-button';
             button.setAttribute('data-filter', 'categories');
             button.setAttribute('data-value', category);
-            button.textContent = category;
+            // 카테고리명에서 "_악상기호" 제거하여 표시
+            button.textContent = window.dataParser.cleanFilterName(category);
             categoriesFilter.appendChild(button);
         });
     }
