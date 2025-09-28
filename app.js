@@ -368,11 +368,10 @@ class OrnamentsApp {
             
             nameDescription.textContent = this.selectedOrnament.name;
         } else {
-            // 선택된 항목이 없을 때 - 기본 상태 표시
+            // 선택된 항목이 없을 때 - 아이콘 숨김
             nameIcon.style.display = 'none';
-            nameIconFallback.style.display = 'flex';
-            nameIconFallback.textContent = '🚫';
-            nameDescription.textContent = '북편과 채편을 동시 연주한다.';
+            nameIconFallback.style.display = 'none';
+            nameDescription.textContent = '선택된 악상기호가 없습니다.';
         }
     }
 
