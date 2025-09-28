@@ -143,8 +143,47 @@ class VSTBridge {
             const description = infoContainer.querySelector('.name-description');
             
             if (icon) {
-                // 악상기호 이미지로 변경 (가능한 경우)
-                icon.textContent = '🎵';
+                // 기존 텍스트 아이콘 제거
+                icon.textContent = '';
+                icon.innerHTML = '';
+                
+                // 악상기호 이미지 생성
+                const img = document.createElement('img');
+                img.src = this.getImagePath(ornament);
+                img.alt = ornament.name;
+                img.style.cssText = `
+                    width: 64px;
+                    height: 64px;
+                    object-fit: contain;
+                    background-color: transparent;
+                    image-rendering: -webkit-optimize-contrast;
+                    image-rendering: crisp-edges;
+                `;
+                
+                // 이미지 로딩 성공 시
+                img.onload = () => {
+                    console.log('선택된 악상기호 이미지 로딩 성공:', img.src);
+                };
+                
+                // 이미지 로딩 실패 시
+                img.onerror = () => {
+                    console.warn('선택된 악상기호 이미지 로딩 실패:', img.src);
+                    // 실패 시 기본 아이콘 표시
+                    icon.textContent = '🎵';
+                    icon.style.cssText = `
+                        width: 64px;
+                        height: 64px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 32px;
+                        background-color: #f8f9fa;
+                        border-radius: 8px;
+                        border: 1px solid #dee2e6;
+                    `;
+                };
+                
+                icon.appendChild(img);
             }
             
             if (description) {
@@ -337,6 +376,68 @@ class VSTBridge {
             console.error('VST 설정 로드 실패:', error);
             return {};
         }
+    }
+
+    /**
+     * 이미지 경로 생성 (VST 브리지용)
+     */
+    getImagePath(ornament) {
+        // XML의 imagePath가 절대 경로이므로 상대 경로로 변환
+        if (ornament.imagePath) {
+            // 절대 경로에서 상대 경로로 변환
+            const relativePath = ornament.imagePath.replace(/^.*\/Resources\//, 'Resources/');
+            console.log('VST 브리지 - XML 경로 변환:', ornament.imagePath, '->', relativePath);
+            return relativePath;
+        }
+        
+        // 기본 이미지 경로 생성
+        const basePath = 'Resources/Ornaments';
+        const instrumentPath = this.getInstrumentPath(ornament.instrumentName);
+        const categoryPath = this.getCategoryPath(ornament.categoryName);
+        const fullPath = `${basePath}/${instrumentPath}/${categoryPath}/${ornament.filename}`;
+        
+        console.log('VST 브리지 - 생성된 경로:', fullPath);
+        return fullPath;
+    }
+
+    /**
+     * 악기 경로 생성 (VST 브리지용)
+     */
+    getInstrumentPath(instrumentName) {
+        const instrumentMap = {
+            '장구': '1_장구',
+            '가야금': '2_가야금', 
+            '대금': '3_대금',
+            '아쟁': '4_아쟁',
+            '피리': '5_피리',
+            '해금': '6_해금',
+            '당피리,세피리': '5_피리'  // 당피리/세피리는 피리 폴더에 있음
+        };
+        
+        const path = instrumentMap[instrumentName] || instrumentName;
+        console.log('VST 브리지 - 악기 경로 매핑:', instrumentName, '->', path);
+        return path;
+    }
+
+    /**
+     * 카테고리 경로 생성 (VST 브리지용)
+     */
+    getCategoryPath(categoryName) {
+        const categoryMap = {
+            '주법_악상기호': '1_주법_악상기호',
+            '빠르기(한배)_악상기호': '2_빠르기(한배)_악상기호',
+            '장식음(꾸밈음)_악상기호': '2_장식음(꾸밈음)_악상기호',
+            '부호_악상기호': '1_부호_악상기호',
+            '빠르기(한배)_악상기호': '3_빠르기(한배)_악상기호',
+            '주법_악상기호': '4_주법_악상기호',
+            '음정(가락)_악상기호': '4_음정(가락)_악상기호',
+            '장식(꾸밈음)_악상기호': '3_장식(꾸밈음)_악상기호',
+            '당피리:세피리_악상기호': '5_당피리:세피리_악상기호'
+        };
+        
+        const path = categoryMap[categoryName] || categoryName;
+        console.log('VST 브리지 - 카테고리 경로 매핑:', categoryName, '->', path);
+        return path;
     }
 }
 
